@@ -40,8 +40,8 @@ class EncryptDecryptFilter( messageBodyDecoders: Set<MessageBodyDecoder>,
     private val messageBodyEncoders: Map<String, MessageBodyEncoder>
 
     init {
-        this.messageBodyDecoders = messageBodyDecoders.map { it.encodingType() to it }.toMap()
-        this.messageBodyEncoders = messageBodyEncoders.map { it.encodingType() to it }.toMap()
+        this.messageBodyDecoders = messageBodyDecoders.associateBy { it.encodingType() }
+        this.messageBodyEncoders = messageBodyEncoders.associateBy { it.encodingType() }
     }
 
     override fun apply(config: Config): GatewayFilter? {
@@ -55,8 +55,8 @@ class EncryptDecryptFilter( messageBodyDecoders: Set<MessageBodyDecoder>,
      private fun getServerHttpResponse(exchange: ServerWebExchange) : ServerHttpResponse {
         val key = exchange.request.headers.getFirst("x-message")
         val originalResponse = exchange.response
-        return ServerHttpResponseDecorator(originalResponse) {
-
+        return object : ServerHttpResponseDecorator(originalResponse) {
+            
         }
      }
 
